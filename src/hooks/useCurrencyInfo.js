@@ -1,15 +1,23 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const useCurrencyInfo = (currency) => {
-  const [data, setData] = useState({});
+  const [data, setData] = useState(null);
+
   useEffect(() => {
-    fetch(`https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/${currency}.json`)
+    fetch(`https://api.exchangerate-api.com/v4/latest/${currency}`)
       .then((res) => res.json())
-      .then((res) => setData(res[currency]));
-    console.log("data", data);
+      .then((res) => {
+        console.log("API Response:", res.rates); // Log the full API response
+        if (res.rates) {
+          setData(res.rates); // Store the rates in the state
+        } else {
+          setData(null); // Handle the case where rates are not available
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching currency data:", error);
+      });
   }, [currency]);
-  console.log("data outside", data);
 
   return data;
 };

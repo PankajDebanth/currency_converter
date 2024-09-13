@@ -4,13 +4,14 @@ import useCurrencyInfo from "./hooks/useCurrencyInfo";
 
 const App = () => {
   const [amount, setAmount] = useState(0);
-  const [from, setFrom] = useState("usd");
-  const [to, setTo] = useState("inr");
+  const [from, setFrom] = useState("USD");
+  const [to, setTo] = useState("INR");
   const [convertedAmount, setConvertedAmount] = useState(0);
 
   const currencyInfo = useCurrencyInfo(from);
 
-  const options = Object.keys(currencyInfo);
+  // Get available currency options
+  const options = currencyInfo ? Object.keys(currencyInfo) : [];
 
   const swap = () => {
     setFrom(to);
@@ -20,7 +21,9 @@ const App = () => {
   };
 
   const convert = () => {
-    setConvertedAmount(amount * currencyInfo[to]);
+    if (currencyInfo && currencyInfo[to]) {
+      setConvertedAmount(amount * currencyInfo[to]);
+    }
   };
 
   return (
@@ -42,8 +45,8 @@ const App = () => {
               <InputBox
                 label="From"
                 amount={amount}
-                currencyOptions={options}
-                onCurrencyChange={(currency) => setAmount(amount)}
+                currencyOptions={options} // Pass the currency options
+                onCurrencyChange={(currency) => setFrom(currency)} // Set currency on change
                 selectCurrency={from}
                 onAmountChange={(amount) => setAmount(amount)}
               />
@@ -61,9 +64,9 @@ const App = () => {
               <InputBox
                 label="To"
                 amount={convertedAmount}
-                currencyOptions={options}
+                currencyOptions={options} // Pass the currency options
                 onCurrencyChange={(currency) => setTo(currency)}
-                selectCurrency={from}
+                selectCurrency={to} // Use `to` for the selectCurrency
                 amountDisable
               />
             </div>
